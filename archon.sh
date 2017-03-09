@@ -9,6 +9,7 @@ function aur_install() {
   if which yaourt; then
     yaourt $AUR_FLAGS -S $@
   else
+    [ ! -d aur ] && mkdir aur && cd aur
     for PKG in $@; do
       curl -o $PKG.tar.gz $AUR_URL_PREFIX/$PKG.tar.gz
       tar -xvzf $PKG.tar.gz
@@ -17,6 +18,7 @@ function aur_install() {
       sudo pacman $AUR_FLAGS -U $PKG-*.pkg.tar.xz
       cd ..
     done
+    cd ..
   fi
 }
 
