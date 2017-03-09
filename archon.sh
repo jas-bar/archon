@@ -4,6 +4,29 @@ PACMAN_FLAGS=--noconfirm
 AUR_FLAGS=--noconfirm
 AUR_URL_PREFIX="https://aur.archlinux.org/cgit/aur.git/snapshot"
 
+# script helper functions
+function confirm_or_kill() {
+  echo "Are you sure you want to continue? [Y/n]: "
+  read confirm
+  if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ];
+    echo "User aborted action"
+    exit 1
+  fi
+}
+
+function print_usage() {
+  echo "archon.sh: ArchLinux Post-Installation Helper Script"
+  echo "Usage: $0 [options...]"
+  echo "Available options:"
+  echo -e "\t-b\tbspwm" "\n\t\t" "pacman -S bspwm && aur -S lemonbar-xft-git"
+  echo -e "\t-g\tgnome" "\n\t\t" "pacman -S gnome && systemctl enable gdm"
+  echo -e "\t-l\tlxdm" "\n\t\t" "pacman -S lxdm && systemctl enable lxdm"
+  echo -e "\t-p\tPulseAudio(+alsa)" "\n\t\t" "pacman -S pulseaudio pulseaudio-alsa"
+  echo -e "\t-x\tX.Org server" "\n\t\t" "pacman -S xorg"
+  echo -e "\t-y\tYaourt (AUR helper)" "\n\t\t" "curl aur/yaourt.tgz && makepkg && pacman -U yaourt.pkg.xz"
+}
+
+# system modification functions
 function aur_install() {
   if which yaourt; then
     yaourt $AUR_FLAGS -S $@
@@ -21,15 +44,6 @@ function aur_install() {
   fi
 }
 
-function confirm_or_kill() {
-  echo "Are you sure you want to continue? [Y/n]: "
-  read confirm
-  if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ];
-    echo "User aborted action"
-    exit 1
-  fi
-}
-
 function pacman_install() {
   sudo pacman $PACMAN_FLAGS -S $@
 }
@@ -38,6 +52,7 @@ function service_enable() {
   sudo systemctl enable "$@"
 }
 
+# installation functions
 function install_yaourt() {
   pacman_install yajl
   aur_install package-query
@@ -73,16 +88,11 @@ function install_pulseaudio() {
   pacman_install pulseaudio pulseaudio-alsa
 }
 
+# script execution entrypoint
+# (no new functions beyond this point)
+
 if [ $# -eq 0 ]; then
-  echo "archon.sh: ArchLinux Post-Installation Helper Script"
-  echo "Usage: $0 [options...]"
-  echo "Available options:"
-  echo -e "\t-b\tbspwm" "\n\t\t" "pacman -S bspwm && aur -S lemonbar-xft-git"
-  echo -e "\t-g\tgnome" "\n\t\t" "pacman -S gnome && systemctl enable gdm"
-  echo -e "\t-l\tlxdm" "\n\t\t" "pacman -S lxdm && systemctl enable lxdm"
-  echo -e "\t-p\tPulseAudio(+alsa)" "\n\t\t" "pacman -S pulseaudio pulseaudio-alsa"
-  echo -e "\t-x\tX.Org server" "\n\t\t" "pacman -S xorg"
-  echo -e "\t-y\tYaourt (AUR helper)" "\n\t\t" "curl aur/yaourt.tgz && makepkg && pacman -U yaourt.pkg.xz"
+  print_usage
   exit 1
 fi
 
