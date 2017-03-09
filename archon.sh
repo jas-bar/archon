@@ -45,6 +45,12 @@ function install_yaourt() {
 }
 
 function install_xorg() {
+  echo "----------------------------------------------------------------------------------------------------"
+  echo "Please make sure drivers for your graphics cards are installed before continuing X.Org installation"
+  echo "You can see list of some of your installed graphics-related packages below:"
+  `sudo pacman -Q | grep -e mesa -e libgl -e xf86-video | sed s': .*::g' | xargs`
+  confirm_or_kill
+  echo "----------------------------------------------------------------------------------------------------"
   pacman_install xorg
 }
 
