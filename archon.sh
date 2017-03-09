@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 PACMAN_FLAGS=--noconfirm
 AUR_FLAGS=--noconfirm
@@ -59,6 +58,20 @@ function install_pulseaudio() {
   pacman_install pulseaudio pulseaudio-alsa
 }
 
+if [ $# -eq 0 ]; then
+  echo "archon.sh: ArchLinux Post-Installation Helper Script"
+  echo "Usage: $0 [options...]"
+  echo "Available options:"
+  echo -e "\t-b\tbspwm" "\n\t\t" "pacman -S bspwm && aur -S lemonbar-xft-git"
+  echo -e "\t-g\tgnome" "\n\t\t" "pacman -S gnome && systemctl enable gdm"
+  echo -e "\t-l\tlxdm" "\n\t\t" "pacman -S lxdm && systemctl enable lxdm"
+  echo -e "\t-p\tPulseAudio(+alsa)" "\n\t\t" "pacman -S pulseaudio pulseaudio-alsa"
+  echo -e "\t-x\tX.Org server" "\n\t\t" "pacman -S xorg"
+  echo -e "\t-y\tYaourt (AUR helper)" "\n\t\t" "curl aur/yaourt.tgz && makepkg && pacman -U yaourt.pkg.xz"
+  exit 1
+fi
+
+# parse options
 while [ $# -gt 0 ]; do
   case "$1" in
     -y)
@@ -82,5 +95,8 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+# actually do something
+set -x
 
 # vim: set ts=2 sts=2 sw=2 expandtab:
