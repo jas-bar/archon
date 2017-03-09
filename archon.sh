@@ -21,6 +21,15 @@ function aur_install() {
   fi
 }
 
+function confirm_or_kill() {
+  echo "Are you sure you want to continue? [Y/n]: "
+  read confirm
+  if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ];
+    echo "User aborted action"
+    exit 1
+  fi
+}
+
 function pacman_install() {
   sudo pacman $PACMAN_FLAGS -S $@
 }
@@ -72,31 +81,59 @@ if [ $# -eq 0 ]; then
 fi
 
 # parse options
+features=""
 while [ $# -gt 0 ]; do
   case "$1" in
     -y)
-      install_yaourt
+      features="$features,yaourt"
       ;;
     -x)
-      install_xorg
+      features="$features,xorg"
       ;;
     -b)
-      install_bspwm
+      features="$features,bspwm"
       ;;
     -g)
-      install_gnome
+      features="$features,gnome"
       ;;
     -l)
-      install_lxdm
+      features="$features,lxdm"
       ;;
     -p)
-      install_pulseaudio
+      features="$features,pulseaudio"
       ;;
   esac
   shift
 done
 
+echo "We are going to install the following features: "
+echo "$features"
+confirm_or_kill
+
 # actually do something
 set -x
+
+# requires only pacman
+if [[ $features == *"pulseaudio"* ]]; then
+  install_pulseaudio
+fi
+if [[ $features == *"xorg"* ]]; then
+  install_xorg
+fi
+# requires desktop
+if [[ $features == *"gnome"* ]]; then
+  install_gnome
+fi
+if [[ $features == *"lxdm"* ]]; then
+  install_lxdm
+fi
+# aur installation
+if [[ $features == *"yaourt"* ]]; then
+  install_yaourt
+fi
+# requires aur
+if [[ $features == *"bspwm"* ]]; then
+  install_bspwm
+fi
 
 # vim: set ts=2 sts=2 sw=2 expandtab:
