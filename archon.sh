@@ -1,23 +1,27 @@
 #!/bin/bash
 set -x
 
+PACMAN_FLAGS=--noconfirm
+AUR_FLAGS=--noconfirm
+AUR_URL_PREFIX="https://aur.archlinux.org/cgit/aur.git/snapshot"
+
 function aur_install() {
   if which yaourt; then
-    yaourt -S $@ --noconfirm
+    yaourt $AUR_FLAGS -S $@
   else
     for PKG in $@; do
-      curl -o $PKG.tar.gz https://aur.archlinux.org/cgit/aur.git/snapshot/$PKG.tar.gz
+      curl -o $PKG.tar.gz $AUR_URL_PREFIX/$PKG.tar.gz
       tar -xvzf $PKG.tar.gz
       cd $PKG
       makepkg
-      sudo pacman -U $PKG-*.pkg.tar.xz
+      sudo pacman $AUR_FLAGS -U $PKG-*.pkg.tar.xz
       cd ..
     done
   fi
 }
 
 function pacman_install() {
-  sudo pacman -S $@ --noconfirm
+  sudo pacman $PACMAN_FLAGS -S $@
 }
 
 function service_enable() {
@@ -76,3 +80,5 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+# vim: set ts=2 sts=2 sw=2 expandtab:
