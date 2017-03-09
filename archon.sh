@@ -7,7 +7,7 @@ PING_HOST="www.archlinux.org"
 
 # script helper functions
 function confirm_or_kill() {
-  echo "Are you sure you want to continue? [Y/n]: "
+  echo -n "Are you sure you want to continue? [Y/n]: "
   read confirm
   if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ]; then
     echo "User aborted action"
