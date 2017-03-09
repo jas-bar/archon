@@ -3,6 +3,7 @@
 PACMAN_FLAGS=--noconfirm
 AUR_FLAGS=--noconfirm
 AUR_URL_PREFIX="https://aur.archlinux.org/cgit/aur.git/snapshot"
+PING_HOST="www.archlinux.org"
 
 # script helper functions
 function confirm_or_kill() {
@@ -95,6 +96,17 @@ if [ $# -eq 0 ]; then
   print_usage
   exit 1
 fi
+
+echo "--------------------------------------------------------------------------------"
+echo "Checking for active internet connection..."
+if ping -c 1 $PING_HOST 2>&1 >/dev/null; then
+  echo "Internet connection found."
+else
+  echo "No active internet connection found(or $PING_HOST is down)"
+  echo "If you're not connected to the internet, all package installations will fail."
+  confirm_or_kill
+fi
+echo "--------------------------------------------------------------------------------"
 
 # parse options
 features=""
