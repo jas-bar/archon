@@ -8,7 +8,7 @@ AUR_URL_PREFIX="https://aur.archlinux.org/cgit/aur.git/snapshot"
 function confirm_or_kill() {
   echo "Are you sure you want to continue? [Y/n]: "
   read confirm
-  if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ];
+  if [ "$confirm" != "" -a "$confirm" != "Y" -a "$confirm" != "y" ]; then
     echo "User aborted action"
     exit 1
   fi
