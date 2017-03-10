@@ -130,6 +130,9 @@ while [ $# -gt 0 ]; do
     -p)
       features="$features,pulseaudio"
       ;;
+    *)
+      echo "Unknown feature: '$1'"
+      ;;
   esac
   shift
 done
